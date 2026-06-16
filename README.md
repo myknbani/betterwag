@@ -9,7 +9,7 @@ Accepts one-time emergency donations and recurring monthly sponsorships via Stri
 
 ```
 Backend:    Laravel 13
-Auth:       Laravel Fortify (session-based)
+Auth:       Laravel Fortify (auth flows: login, register, reset) + Sanctum (session/cookie guard)
 Payments:   Laravel Cashier + Stripe
 Email:      AWS SES via Laravel Mail
 Storage:    AWS S3 via Laravel Storage
@@ -18,6 +18,33 @@ DB:         PostgreSQL
 Frontend:   Vue 3 + Inertia v3 + Tailwind CSS v4
 Testing:    Pest
 ```
+
+---
+
+## Tooling
+
+> Cross-stack tooling (git hooks, commit conventions) deliberately uses npm packages — the Node ecosystem is more mature and battle-tested for these concerns than PHP equivalents like CaptainHook or GrumPHP.
+
+| Concern                | Tool                                                                                                   | Source   | When            |
+| ---------------------- | ------------------------------------------------------------------------------------------------------ | -------- | --------------- |
+| Formatting (PHP)       | [Pint](https://github.com/laravel/pint)                                                                | Composer | pre-commit, CI  |
+| Formatting (JS/TS/Vue) | [Prettier](https://prettier.io)                                                                        | npm      | pre-commit, CI  |
+| Linting (JS/TS/Vue)    | [ESLint](https://eslint.org)                                                                           | npm      | pre-commit, CI  |
+| Static analysis (PHP)  | [PHPStan](https://phpstan.org) via [Larastan](https://github.com/larastan/larastan)                    | Composer | pre-push, CI    |
+| Type checking (Vue/TS) | [vue-tsc](https://github.com/vuejs/language-tools)                                                     | npm      | pre-commit, CI  |
+| Testing                | [Pest](https://pestphp.com) (PHPUnit under the hood)                                                   | Composer | CI, on demand   |
+| Commit format          | [Commitlint](https://commitlint.js.org) + [Commitizen](https://commitizen-tools.github.io/commitizen/) | npm      | commit-msg hook |
+| Git hooks              | [Husky](https://typicode.github.io/husky) + [lint-staged](https://github.com/lint-staged/lint-staged)  | npm      | on git events   |
+
+### Hook summary
+
+| Hook         | Runs                                                                              |
+| ------------ | --------------------------------------------------------------------------------- |
+| `pre-commit` | lint-staged → Pint (`.php`), ESLint + Prettier (`.ts`, `.vue`) + vue-tsc          |
+| `commit-msg` | Commitlint (enforces [Conventional Commits](https://www.conventionalcommits.org)) |
+| `pre-push`   | PHPStan                                                                           |
+
+Use `npm run commit` for an interactive conventional commit prompt via Commitizen.
 
 ---
 
