@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateDogRequest;
 use App\Http\Requests\UpdateDogRequest;
 use App\Models\Dog;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
 class DogController extends Controller
@@ -12,9 +13,9 @@ class DogController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        $dogs = Dog::orderByDesc('is_urgent')->orderBy('name')->get();
+        $dogs = Dog::orderByDesc('is_urgent')->orderBy('name', 'asc')->get();
 
         return response()->json($dogs);
     }
@@ -22,7 +23,7 @@ class DogController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(CreateDogRequest $request)
+    public function store(CreateDogRequest $request): JsonResponse
     {
         $dog = Dog::create($request->validated());
 
@@ -32,7 +33,7 @@ class DogController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Dog $dog)
+    public function show(Dog $dog): JsonResponse
     {
         return response()->json($dog);
     }
@@ -40,7 +41,7 @@ class DogController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateDogRequest $request, Dog $dog)
+    public function update(UpdateDogRequest $request, Dog $dog): JsonResponse
     {
         $dog->update($request->validated());
 
@@ -50,7 +51,7 @@ class DogController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Dog $dog)
+    public function destroy(Dog $dog): Response
     {
         $dog->delete();
 
