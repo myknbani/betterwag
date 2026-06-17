@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateDogRequest;
+use App\Http\Requests\UpdateDogRequest;
 use App\Models\Dog;
-use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class DogController extends Controller
 {
@@ -12,15 +14,19 @@ class DogController extends Controller
      */
     public function index()
     {
-        //
+        $dogs = Dog::orderByDesc('is_urgent')->orderBy('name')->get();
+
+        return response()->json($dogs);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateDogRequest $request)
     {
-        //
+        $dog = Dog::create($request->validated());
+
+        return response()->json($dog, Response::HTTP_CREATED);
     }
 
     /**
@@ -28,15 +34,17 @@ class DogController extends Controller
      */
     public function show(Dog $dog)
     {
-        //
+        return response()->json($dog);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Dog $dog)
+    public function update(UpdateDogRequest $request, Dog $dog)
     {
-        //
+        $dog->update($request->validated());
+
+        return response()->json($dog->refresh());
     }
 
     /**
@@ -44,6 +52,8 @@ class DogController extends Controller
      */
     public function destroy(Dog $dog)
     {
-        //
+        $dog->delete();
+
+        return response()->noContent();
     }
 }
