@@ -20,6 +20,9 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Test User', 'password' => 'password'],
         );
 
-        $this->call(DogSeeder::class);
+        $this->call([
+            ShelterSeeder::class,
+            DogSeeder::class,
+        ]);
     }
 }
