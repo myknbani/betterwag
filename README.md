@@ -324,6 +324,32 @@ PATCH  /api/dogs/{dog}/status                     shelter_admin
 DELETE /api/dogs/{dog}                            shelter_admin, soft delete
 ```
 
+## Permissions Matrix
+
+Roles: `External` (donor/adopter/fosterer), `ShelterManager` (staff of a specific shelter), `Admin` (super admin).
+
+### Shelters
+
+| Endpoint                   | External | ShelterManager | Admin |
+| -------------------------- | :------: | :------------: | :---: |
+| GET /shelters              | ✓        | ✓              | ✓     |
+| POST /shelters             | ✗        | ✗              | ✓     |
+| GET /shelters/{shelter}    | ✓        | ✓              | ✓     |
+| PUT /shelters/{shelter}    | ✗        | own shelter    | ✓     |
+
+### Dogs
+
+| Endpoint                          | External | ShelterManager  | Admin |
+| --------------------------------- | :------: | :-------------: | :---: |
+| GET /dogs                         | ✓        | ✓               | ✓     |
+| POST /shelters/{shelter}/dogs     | ✗        | own shelter     | ✓     |
+| GET /dogs/{dog}                   | ✓        | ✓               | ✓     |
+| PUT /dogs/{dog}                   | ✗        | own shelter     | ✓     |
+| PATCH /dogs/{dog}/status          | ✗        | own shelter     | ✓     |
+| DELETE /dogs/{dog}                | ✗        | own shelter     | ✓     |
+
+---
+
 ### Dog Photos
 
 ```
