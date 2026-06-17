@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\AdoptionStatus;
+use App\Enums\Gender;
 use Carbon\CarbonImmutable;
 use Database\Factories\DogFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -50,4 +52,14 @@ class Dog extends Model
     use HasFactory;
 
     use SoftDeletes;
+
+    protected function casts(): array
+    {
+        return [
+            'is_urgent' => 'boolean',
+            'rescued_at' => 'dattime',
+            'gender' => Gender::class,
+            'adoption_status' => AdoptionStatus::class,
+        ];
+    }
 }
