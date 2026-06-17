@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Shelter;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -15,14 +16,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::firstOrCreate(
-            ['email' => 'test@example.com'],
-            ['name' => 'Test User', 'password' => 'password'],
-        );
-
         $this->call([
             ShelterSeeder::class,
             DogSeeder::class,
         ]);
+
+        $shelter = Shelter::first();
+
+        User::factory()->admin()->create(['email' => 'admin@example.com']);
+        User::factory()->shelterManager($shelter)->create(['email' => 'manager@example.com']);
+        User::factory()->external()->create(['email' => 'donor@example.com']);
     }
 }
