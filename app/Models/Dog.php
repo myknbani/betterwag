@@ -6,6 +6,7 @@ use App\Enums\AdoptionStatus;
 use App\Enums\Gender;
 use Carbon\CarbonImmutable;
 use Database\Factories\DogFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,11 +16,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $name
  * @property string|null $breed
  * @property int|null $age_months
- * @property string|null $gender
+ * @property Gender|null $gender
  * @property string|null $description
- * @property string $adoption_status
+ * @property AdoptionStatus $adoption_status
  * @property bool $is_urgent
- * @property string|null $rescued_at
+ * @property mixed|null $rescued_at
  * @property CarbonImmutable|null $deleted_at
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
@@ -46,6 +47,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @mixin \Eloquent
  */
+#[Fillable([
+    'name',
+    'breed',
+    'age_months',
+    'gender',
+    'description',
+    'adoption_status',
+    'is_urgent',
+    'rescued_at',
+])]
 class Dog extends Model
 {
     /** @use HasFactory<DogFactory> */
@@ -57,7 +68,7 @@ class Dog extends Model
     {
         return [
             'is_urgent' => 'boolean',
-            'rescued_at' => 'dattime',
+            'rescued_at' => 'datetime',
             'gender' => Gender::class,
             'adoption_status' => AdoptionStatus::class,
         ];
