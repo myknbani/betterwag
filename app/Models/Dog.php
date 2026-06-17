@@ -45,6 +45,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Dog withTrashed(bool $withTrashed = true)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Dog withoutTrashed()
  *
+ * @property int $shelter_id
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Dog whereShelterId($value)
+ *
  * @mixin \Eloquent
  */
 #[Fillable([
