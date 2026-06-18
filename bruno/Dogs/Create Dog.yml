@@ -1,0 +1,27 @@
+info:
+  name: Create Dog
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/shelters/1/dogs"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Choco",
+        "breed": "Golden Retriever",
+        "age_months": 6,
+        "gender": "male",
+        "description": "A playful brown puppy",
+        "adoption_status": "available",
+        "is_urgent": false
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

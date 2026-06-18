@@ -1,0 +1,25 @@
+info:
+  name: Create Shelter
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/shelters"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Paws PH",
+        "email": "paws@example.com",
+        "location": "Makati",
+        "phone_number": "09171234567",
+        "description": "A shelter for rescued dogs in Metro Manila"
+      }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

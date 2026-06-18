@@ -1,0 +1,22 @@
+info:
+  name: Update Dog
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/api/dogs/1"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Choco",
+        "is_urgent": true
+      }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
