@@ -1,0 +1,23 @@
+info:
+  name: Create Campaign
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/shelters/1/campaigns"
+  body:
+    type: json
+    data: |-
+      {
+        "title": "Help us keep the lights on",
+        "description": "Monthly sponsorship to fund food and operations",
+        "type": "recurring"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

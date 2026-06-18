@@ -1,0 +1,21 @@
+info:
+  name: Close Campaign
+  type: http
+  seq: 5
+
+http:
+  method: PATCH
+  url: "{{baseUrl}}/api/campaigns/1/close"
+  body:
+    type: json
+    data: |-
+      {
+        "closed_reason": "Goal reached, thank you to all donors!"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
