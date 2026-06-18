@@ -19,4 +19,5 @@ Route::middleware('auth:sanctum')
         Route::apiResource('shelters.campaigns', CampaignController::class)
             ->shallow()
             ->except(['index', 'show']);
+        Route::patch('campaigns/{campaign}/close', [CampaignController::class, 'close'])->name('campaigns.close');
     });

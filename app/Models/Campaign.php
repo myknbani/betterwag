@@ -82,6 +82,15 @@ class Campaign extends Model
         return $this->belongsTo(Dog::class);
     }
 
+    public function close(?string $reason = null): void
+    {
+        $this->update([
+            'status' => CampaignStatus::Closed,
+            'closed_at' => now(),
+            'closed_reason' => $reason,
+        ]);
+    }
+
     protected function casts(): array
     {
         return [

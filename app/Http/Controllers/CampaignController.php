@@ -2,48 +2,65 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CloseCampaignRequest;
+use App\Http\Requests\CreateCampaignRequest;
+use App\Http\Requests\UpdateCampaignRequest;
 use App\Models\Campaign;
-use Illuminate\Http\Request;
+use App\Models\Shelter;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class CampaignController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Shelter $shelter): AnonymousResourceCollection
     {
-        //
+        $campaigns = $shelter
+            ->campaigns()
+            ->orderByDesc('created_at')
+            ->paginate(10);
+
+        return $campaigns->toResourceCollection();
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateCampaignRequest $request, Shelter $shelter): JsonResource
     {
-        //
+        $campaign = Campaign::create([...$request->validated(), 'shelter_id' => $shelter->id]);
+
+        return $campaign->toResource();
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Campaign $campaign)
+    public function show(Campaign $campaign): JsonResource
     {
-        //
+        return $campaign->toResource();
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Campaign $campaign)
+    public function update(UpdateCampaignRequest $request, Campaign $campaign): JsonResource
     {
-        //
+        $campaign->update($request->validated());
+
+        return $campaign->refresh()->toResource();
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Close the specified campaign.
      */
-    public function destroy(Campaign $campaign)
+    public function close(CloseCampaignRequest $request, Campaign $campaign): JsonResource
     {
-        //
+        $validatedBody = $request->validated();
+        $campaign->close($validatedBody['closed_reason'] ?? null);
+
+        return $campaign->refresh()->toResource();
     }
 }
