@@ -11,7 +11,7 @@ class UpdateDogRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return $this->user()->can('update', $this->route('dog'));
     }
 
     /** @return array<string, ValidationRule|array<mixed>|string> */

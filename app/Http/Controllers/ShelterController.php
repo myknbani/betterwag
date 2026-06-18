@@ -53,6 +53,7 @@ class ShelterController extends Controller
      */
     public function destroy(Shelter $shelter): Response
     {
+        $this->authorize('delete', $shelter);
         $shelter->delete();
 
         return response()->noContent();

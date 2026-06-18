@@ -54,6 +54,7 @@ class DogController extends Controller
      */
     public function destroy(Dog $dog): Response
     {
+        $this->authorize('delete', $dog);
         $dog->delete();
 
         return response()->noContent();
