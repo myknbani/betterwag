@@ -106,6 +106,11 @@ class User extends Authenticatable implements PasskeyUser
         return $this->shelter_id === $dog->shelter_id;
     }
 
+    public function isOwnCampaign(Campaign $campaign): bool
+    {
+        return $this->shelter_id === $campaign->shelter_id;
+    }
+
     public function isOwnShelter(Shelter $shelter): bool
     {
         return $this->shelter_id === $shelter->id;
