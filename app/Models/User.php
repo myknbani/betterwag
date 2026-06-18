@@ -95,4 +95,9 @@ class User extends Authenticatable implements PasskeyUser
     {
         return $this->belongsTo(Shelter::class);
     }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === Role::Admin;
+    }
 }
