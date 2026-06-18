@@ -100,4 +100,14 @@ class User extends Authenticatable implements PasskeyUser
     {
         return $this->role === Role::Admin;
     }
+
+    public function isOwnDog(Dog $dog): bool
+    {
+        return $this->shelter_id === $dog->shelter_id;
+    }
+
+    public function isOwnShelter(Shelter $shelter): bool
+    {
+        return $this->shelter_id === $shelter->id;
+    }
 }
