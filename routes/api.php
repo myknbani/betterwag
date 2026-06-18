@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')
     ->group(function () {
         Route::get('/user', fn (Request $request) => $request->user());
-        Route::apiResource('dogs', DogController::class);
+
         Route::apiResource('shelters', ShelterController::class);
+        Route::apiResource('shelters.dogs', DogController::class)->shallow();
     });
