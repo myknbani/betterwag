@@ -7,9 +7,11 @@ use App\Enums\Gender;
 use Carbon\CarbonImmutable;
 use Database\Factories\DogFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -51,6 +53,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Dog whereShelterId($value)
  *
  * @property-read Shelter|null $shelter
+ * @property-read Collection<int, Campaign> $campaigns
+ * @property-read int|null $campaigns_count
  *
  * @mixin \Eloquent
  */
@@ -86,5 +90,11 @@ class Dog extends Model
     public function shelter(): BelongsTo
     {
         return $this->belongsTo(Shelter::class);
+    }
+
+    /** @return HasMany<Campaign, $this> */
+    public function campaigns(): HasMany
+    {
+        return $this->hasMany(Campaign::class);
     }
 }

@@ -80,15 +80,15 @@ Shelter
 
 Dog
 ├── belongs to Shelter
-├── has one active Campaign
+├── has many Campaigns (optional FK — campaigns can be shelter-wide)
 ├── has many VetRecords
 ├── has many Photos
 ├── has many AdoptionApplications
 └── has many FosterApplications
 
 Campaign
-├── belongs to Dog (optional — recurring campaigns may have no dog)
 ├── belongs to Shelter
+├── belongs to Dog (optional — scope to a specific dog or leave null for shelter-wide)
 ├── has many Donations
 ├── type: recurring | one_off
 └── status: active | closed | cancelled  (goal_reached is computed: SUM paid donations >= goal_amount)
@@ -132,7 +132,7 @@ stateDiagram-v2
     state "rainbow bridge" as rainbow_bridge
 
     [*] --> rescued : intake
-    rescued --> available : vet assessment<br>(VetRecord created, Campaign opened if needed)
+    rescued --> available : vet assessment<br>(VetRecord created, one-off Campaign opened if needed)
     available --> fostered : foster approved
     available --> adopted : adoption approved
     available --> rainbow_bridge : passed away
@@ -147,19 +147,22 @@ stateDiagram-v2
 
 ## Campaign Types
 
-### Recurring — Food & Upkeep
+### Recurring — Keep the Shelter Alive
 
-- Monthly sponsorship per dog
+- Monthly sponsorship to fund food, upkeep, operations
+- Shelter-wide by default (`dog_id` null); can be scoped to a dog
 - No hard goal (ongoing)
-- Closes when dog is adopted or passes away
+- Closes only when admin manually closes it or the shelter shuts down
 - Donor charged monthly via Stripe subscription
 
 ### One-off — Emergency
 
 - Hard goal amount (e.g. ₱15,000 for surgery)
+- Can be dog-specific (surgery) or shelter-wide (tick epidemic, new van)
+- `dog_id` optional
 - Closes when goal reached or manually by admin
 - Single charge
-- Examples: hit by car, surgery, rescue transport, spay/neuter drive
+- Examples: hit by car, surgery, rescue transport, spay/neuter drive, parasite treatment
 
 ---
 
@@ -217,7 +220,7 @@ stateDiagram-v2
 | ------------- | ------------------ | --------------------------------------- |
 | id          | bigint PK          |                                                                       |
 | shelter_id  | FK                 |                                                                       |
-| dog_id      | FK nullable        | null for shelter-level recurring campaigns                            |
+| dog_id      | FK nullable        | optional for both types; null = shelter-wide campaign                 |
 | title       | string             |                                                                       |
 | description | text nullable      |                                                                       |
 | type        | enum               | recurring, one_off                                                    |

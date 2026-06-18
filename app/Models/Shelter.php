@@ -43,6 +43,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read int|null $dogs_count
  * @property-read Collection<int, User> $users
  * @property-read int|null $users_count
+ * @property-read Collection<int, Campaign> $campaigns
+ * @property-read int|null $campaigns_count
  *
  * @mixin \Eloquent
  */
@@ -62,5 +64,11 @@ class Shelter extends Model
     public function users(): HasMany
     {
         return $this->hasMany(User::class);
+    }
+
+    /** @return HasMany<Campaign, $this> */
+    public function campaigns(): HasMany
+    {
+        return $this->hasMany(Campaign::class);
     }
 }
