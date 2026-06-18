@@ -6,52 +6,40 @@ use App\Http\Requests\CreateDogRequest;
 use App\Http\Requests\UpdateDogRequest;
 use App\Models\Dog;
 use App\Models\Shelter;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
 
 class DogController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Shelter $shelter): JsonResponse
+    public function index(Shelter $shelter): AnonymousResourceCollection
     {
-        $dogs = $shelter->dogs()->orderByDesc('is_urgent')->orderBy('name', 'asc')->get();
-
-        return response()->json($dogs);
+        return $shelter
+            ->dogs()
+            ->orderByDesc('is_urgent')
+            ->orderBy('name', 'asc')
+            ->get()
+            ->toResourceCollection();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(CreateDogRequest $request, Shelter $shelter): JsonResponse
+    public function store(CreateDogRequest $request, Shelter $shelter): JsonResource
     {
-        $dog = Dog::create([...$request->validated(), 'shelter_id' => $shelter->id]);
-
-        return response()->json($dog, Response::HTTP_CREATED);
+        return Dog::create([...$request->validated(), 'shelter_id' => $shelter->id])
+            ->toResource();
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Dog $dog): JsonResponse
+    public function show(Dog $dog): JsonResource
     {
-        return response()->json($dog);
+        return $dog->toResource();
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateDogRequest $request, Dog $dog): JsonResponse
+    public function update(UpdateDogRequest $request, Dog $dog): JsonResource
     {
         $dog->update($request->validated());
 
-        return response()->json($dog->refresh());
+        return $dog->refresh()->toResource();
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Dog $dog): Response
     {
         $this->authorize('delete', $dog);
