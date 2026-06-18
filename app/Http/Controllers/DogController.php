@@ -6,13 +6,13 @@ use App\Http\Requests\CreateDogRequest;
 use App\Http\Requests\UpdateDogRequest;
 use App\Models\Dog;
 use App\Models\Shelter;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
 
 class DogController extends Controller
 {
-    public function index(Shelter $shelter): AnonymousResourceCollection
+    public function index(Shelter $shelter): ResourceCollection
     {
         return $shelter
             ->dogs()

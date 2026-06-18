@@ -5,13 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateShelterRequest;
 use App\Http\Requests\UpdateShelterRequest;
 use App\Models\Shelter;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
 
 class ShelterController extends Controller
 {
-    public function index(): AnonymousResourceCollection
+    public function index(): ResourceCollection
     {
         return Shelter::orderBy('name', 'asc')->get()->toResourceCollection();
     }

@@ -7,15 +7,15 @@ use App\Http\Requests\CreateCampaignRequest;
 use App\Http\Requests\UpdateCampaignRequest;
 use App\Models\Campaign;
 use App\Models\Shelter;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class CampaignController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Shelter $shelter): AnonymousResourceCollection
+    public function index(Shelter $shelter): ResourceCollection
     {
         $campaigns = $shelter
             ->campaigns()
