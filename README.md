@@ -354,6 +354,15 @@ Roles: `External` (donor/adopter/fosterer), `ShelterManager` (staff of a specifi
 | PUT /dogs/{dog}                   | ✗        | own shelter    | ✓     |
 | DELETE /dogs/{dog}                | ✗        | own shelter    | ✓     |
 
+### Campaigns
+
+| Endpoint                                | External | ShelterManager | Admin |
+| --------------------------------------- | :------: | :------------: | :---: |
+| GET /shelters/{shelter}/campaigns       | ✓        | ✓              | ✓     |
+| POST /shelters/{shelter}/campaigns      | ✗        | own shelter    | ✓     |
+| GET /campaigns/{campaign}               | ✓        | ✓              | ✓     |
+| PATCH /campaigns/{campaign}/close       | ✗        | own shelter    | ✓     |
+
 ---
 
 ### Dog Photos
@@ -367,10 +376,10 @@ PATCH  /api/dogs/{dog}/photos/{photo}/primary     shelter_admin, set as primary
 ### Campaigns
 
 ```
-GET    /api/dogs/{dog}/campaigns                  public
-POST   /api/dogs/{dog}/campaigns                  shelter_admin
+GET    /api/shelters/{shelter}/campaigns          public
+POST   /api/shelters/{shelter}/campaigns          ShelterManager (own shelter) | Admin
 GET    /api/campaigns/{campaign}                  public, with progress %
-PATCH  /api/campaigns/{campaign}/close            shelter_admin
+PATCH  /api/campaigns/{campaign}/close            ShelterManager (own shelter) | Admin
 ```
 
 ### Donations
@@ -489,8 +498,8 @@ DogPolicy
 
 CampaignPolicy
   view:            public
-  create:          shelter_admin of campaign's dog's shelter
-  close:           shelter_admin only
+  create:          ShelterManager of that shelter
+  close:           ShelterManager of that shelter
 
 DonationPolicy
   view:            donor sees own only
