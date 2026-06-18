@@ -6,7 +6,7 @@ info:
 http:
   method: GET
   url: "{{baseUrl}}/api/shelters/1/dogs"
-  auth: inherit
+  auth: none
 
 settings:
   encodeUrl: true
