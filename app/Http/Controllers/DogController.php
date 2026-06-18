@@ -16,9 +16,9 @@ class DogController extends Controller
      */
     public function index(Shelter $shelter): JsonResponse
     {
-        $dogs = Dog::orderByDesc('is_urgent')->orderBy('name', 'asc')->get();
+        $dogs = $shelter->dogs()->orderByDesc('is_urgent')->orderBy('name', 'asc')->get();
 
-        return response()->json($shelter->dogs);
+        return response()->json($dogs);
     }
 
     /**
