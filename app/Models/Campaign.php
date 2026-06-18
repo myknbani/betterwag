@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\CampaignStatus;
 use App\Enums\CampaignType;
+use Carbon\CarbonImmutable;
 use Database\Factories\CampaignFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,6 +17,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property CampaignStatus $status
  * @property-read Dog|null $dog
  * @property-read Shelter|null $shelter
+ * @property int $id
+ * @property int $shelter_id
+ * @property int|null $dog_id
+ * @property string $title
+ * @property string|null $description
+ * @property int|null $goal_amount
+ * @property CarbonImmutable|null $closed_at
+ * @property string|null $closed_reason
+ * @property CarbonImmutable|null $deleted_at
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
  *
  * @method static \Database\Factories\CampaignFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign newModelQuery()
@@ -24,6 +36,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign withTrashed(bool $withTrashed = true)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign withoutTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereClosedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereClosedReason($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereDogId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereGoalAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereShelterId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereUpdatedAt($value)
  *
  * @mixin \Eloquent
  */
