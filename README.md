@@ -87,11 +87,11 @@ Dog
 └── has many FosterApplications
 
 Campaign
-├── belongs to Dog
+├── belongs to Dog (optional — recurring campaigns may have no dog)
 ├── belongs to Shelter
 ├── has many Donations
 ├── type: recurring | one_off
-└── status: active | goal_reached | closed | cancelled
+└── status: active | closed | cancelled  (goal_reached is computed: SUM paid donations >= goal_amount)
 
 Donation
 ├── belongs to Campaign
@@ -100,7 +100,7 @@ Donation
 └── status: pending | paid | failed | refunded
 
 User
-├── role: donor | shelter_admin | super_admin
+├── role: External | ShelterManager | Admin
 ├── has many Donations
 ├── has many AdoptionApplications
 └── has many FosterApplications
@@ -167,14 +167,16 @@ stateDiagram-v2
 
 ### shelters
 
-| column      | type            | notes |
-| ----------- | --------------- | ----- |
-| id          | bigint PK       |       |
-| name        | string          |       |
-| email       | string unique   |       |
-| location    | string nullable |       |
-| description | text nullable   |       |
-| timestamps  |                 |       |
+| column       | type               | notes       |
+| ------------ | ------------------ | ----------- |
+| id           | bigint PK          |             |
+| name         | string             |             |
+| email        | string unique      |             |
+| phone_number | string nullable    |             |
+| location     | string             |             |
+| description  | string nullable    |             |
+| deleted_at   | timestamp nullable | soft delete |
+| timestamps   |                    |             |
 
 ### users
 
@@ -185,7 +187,7 @@ stateDiagram-v2
 | name          | string             |                                   |
 | email         | string unique      |                                   |
 | password      | string             |                                   |
-| role          | enum               | donor, shelter_admin, super_admin |
+| role          | enum               | external, shelter_manager, admin  |
 | stripe_id     | string nullable    | Cashier                           |
 | pm_type       | string nullable    | Cashier                           |
 | pm_last_four  | string nullable    | Cashier                           |
@@ -196,34 +198,35 @@ stateDiagram-v2
 
 | column      | type                  | notes                                                 |
 | ----------- | --------------------- | ----------------------------------------------------- |
-| id          | bigint PK             |                                                       |
-| shelter_id  | FK                    |                                                       |
-| name        | string                |                                                       |
-| breed       | string nullable       |                                                       |
-| age_years   | tinyint nullable      |                                                       |
-| gender      | enum                  | male, female, unknown                                 |
-| description | text nullable         |                                                       |
-| status      | enum                  | rescued, available, fostered, adopted, rainbow_bridge |
-| is_urgent   | boolean default false | bumps to top of listing                               |
-| rescued_at  | date nullable         |                                                       |
-| deleted_at  | timestamp nullable    | soft delete                                           |
-| timestamps  |                       |                                                       |
+| id               | bigint PK             |                                                       |
+| shelter_id       | FK                    |                                                       |
+| name             | string                |                                                       |
+| breed            | string nullable       |                                                       |
+| age_months       | integer nullable      |                                                       |
+| gender           | enum                  | male, female                                          |
+| description      | text nullable         |                                                       |
+| adoption_status  | enum                  | rescued, available, fostered, adopted, rainbow_bridge |
+| is_urgent        | boolean default false | bumps to top of listing                               |
+| rescued_at       | date nullable         |                                                       |
+| deleted_at       | timestamp nullable    | soft delete                                           |
+| timestamps       |                       |                                                       |
 
 ### campaigns
 
 | column        | type               | notes                                   |
 | ------------- | ------------------ | --------------------------------------- |
-| id            | bigint PK          |                                         |
-| shelter_id    | FK                 |                                         |
-| dog_id        | FK                 |                                         |
-| title         | string             |                                         |
-| description   | text nullable      |                                         |
-| type          | enum               | recurring, one_off                      |
-| status        | enum               | active, goal_reached, closed, cancelled |
-| goal_amount   | integer nullable   | centavos, one_off only                  |
-| amount_raised | integer default 0  | centavos                                |
-| closed_at     | timestamp nullable |                                         |
-| timestamps    |                    |                                         |
+| id          | bigint PK          |                                                                       |
+| shelter_id  | FK                 |                                                                       |
+| dog_id      | FK nullable        | null for shelter-level recurring campaigns                            |
+| title       | string             |                                                                       |
+| description | text nullable      |                                                                       |
+| type        | enum               | recurring, one_off                                                    |
+| status      | enum               | active, closed, cancelled                                             |
+| goal_amount | integer nullable   | centavos, one_off only                                                |
+| closed_at   | timestamp nullable |                                                                       |
+| timestamps  |                    |                                                                       |
+
+> `goal_reached` is not stored — computed via `SUM(donations.amount WHERE status='paid') >= goal_amount`.
 
 ### donations
 
@@ -301,52 +304,52 @@ These power the Inertia frontend and are available to external clients (e.g. mob
 POST   /api/register
 POST   /api/login
 POST   /api/logout
-GET    /api/me
+GET    /api/user
 ```
 
 ### Shelters
 
 ```
 GET    /api/shelters                              public
-POST   /api/shelters                              super_admin
+POST   /api/shelters                              Admin
 GET    /api/shelters/{shelter}                    public
-PUT    /api/shelters/{shelter}                    super_admin
+PUT    /api/shelters/{shelter}                    Admin | ShelterManager (own shelter)
+DELETE /api/shelters/{shelter}                    Admin
 ```
 
 ### Dogs
 
 ```
-GET    /api/dogs                                  public, urgent first, filterable by status/shelter
-POST   /api/shelters/{shelter}/dogs               shelter_admin
-GET    /api/dogs/{dog}                            public, with active campaign + progress
-PUT    /api/dogs/{dog}                            shelter_admin
-PATCH  /api/dogs/{dog}/status                     shelter_admin
-DELETE /api/dogs/{dog}                            shelter_admin, soft delete
+GET    /api/shelters/{shelter}/dogs               public, urgent first
+POST   /api/shelters/{shelter}/dogs               ShelterManager (own shelter) | Admin
+GET    /api/dogs/{dog}                            public
+PUT    /api/dogs/{dog}                            ShelterManager (own shelter) | Admin
+DELETE /api/dogs/{dog}                            ShelterManager (own shelter) | Admin, soft delete
 ```
 
 ## Permissions Matrix
 
-Roles: `External` (donor/adopter/fosterer), `ShelterManager` (staff of a specific shelter), `Admin` (super admin).
+Roles: `External` (donor/adopter/fosterer), `ShelterManager` (staff of a specific shelter), `Admin` (app-wide).
 
 ### Shelters
 
-| Endpoint                   | External | ShelterManager | Admin |
-| -------------------------- | :------: | :------------: | :---: |
-| GET /shelters              | ✓        | ✓              | ✓     |
-| POST /shelters             | ✗        | ✗              | ✓     |
-| GET /shelters/{shelter}    | ✓        | ✓              | ✓     |
-| PUT /shelters/{shelter}    | ✗        | own shelter    | ✓     |
+| Endpoint                    | External | ShelterManager | Admin |
+| --------------------------- | :------: | :------------: | :---: |
+| GET /shelters               | ✓        | ✓              | ✓     |
+| POST /shelters              | ✗        | ✗              | ✓     |
+| GET /shelters/{shelter}     | ✓        | ✓              | ✓     |
+| PUT /shelters/{shelter}     | ✗        | own shelter    | ✓     |
+| DELETE /shelters/{shelter}  | ✗        | ✗              | ✓     |
 
 ### Dogs
 
-| Endpoint                          | External | ShelterManager  | Admin |
-| --------------------------------- | :------: | :-------------: | :---: |
-| GET /dogs                         | ✓        | ✓               | ✓     |
-| POST /shelters/{shelter}/dogs     | ✗        | own shelter     | ✓     |
-| GET /dogs/{dog}                   | ✓        | ✓               | ✓     |
-| PUT /dogs/{dog}                   | ✗        | own shelter     | ✓     |
-| PATCH /dogs/{dog}/status          | ✗        | own shelter     | ✓     |
-| DELETE /dogs/{dog}                | ✗        | own shelter     | ✓     |
+| Endpoint                          | External | ShelterManager | Admin |
+| --------------------------------- | :------: | :------------: | :---: |
+| GET /shelters/{shelter}/dogs      | ✓        | ✓              | ✓     |
+| POST /shelters/{shelter}/dogs     | ✗        | own shelter    | ✓     |
+| GET /dogs/{dog}                   | ✓        | ✓              | ✓     |
+| PUT /dogs/{dog}                   | ✗        | own shelter    | ✓     |
+| DELETE /dogs/{dog}                | ✗        | own shelter    | ✓     |
 
 ---
 
@@ -408,9 +411,9 @@ POST   /api/webhooks/stripe                       Stripe signed webhook
 ## Stripe Webhook Events
 
 ```
-payment_intent.succeeded          mark Donation paid, update Campaign amount_raised
+payment_intent.succeeded          mark Donation paid, check goal_reached via SUM
 payment_intent.payment_failed     mark Donation failed, notify donor
-invoice.payment_succeeded         recurring donation paid, update amount_raised
+invoice.payment_succeeded         recurring donation paid, check goal_reached via SUM
 invoice.payment_failed            notify donor of failed recurring charge
 customer.subscription.deleted     mark recurring Donation cancelled
 ```
@@ -448,8 +451,10 @@ CancelDogSubscriptionsJob         cancel all recurring donations when dog adopte
 
 ```
 RegisterRequest
+CreateShelterRequest
+UpdateShelterRequest
 CreateDogRequest
-UpdateDogStatusRequest
+UpdateDogRequest
 CreateCampaignRequest
 CreateDonationRequest
 CreateApplicationRequest
