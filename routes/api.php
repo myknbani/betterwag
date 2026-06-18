@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\DogController;
+use App\Http\Controllers\DonationController;
 use App\Http\Controllers\ShelterController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,4 +21,6 @@ Route::middleware('auth:sanctum')
             ->shallow()
             ->except(['index', 'show']);
         Route::patch('campaigns/{campaign}/close', [CampaignController::class, 'close'])->name('campaigns.close');
+        Route::post('campaigns/{campaign}/donate', [DonationController::class, 'store'])->name('donations.store');
+        Route::get('donations/{donation}', [DonationController::class, 'show'])->name('donations.show');
     });

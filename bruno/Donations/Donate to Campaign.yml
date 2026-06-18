@@ -1,0 +1,22 @@
+info:
+  name: Donate to Campaign
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/campaigns/1/donate"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "type": "one_time",
+        "amount": 5000
+      }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

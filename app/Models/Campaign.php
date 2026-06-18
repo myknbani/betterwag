@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -80,6 +81,12 @@ class Campaign extends Model
     public function dog(): BelongsTo
     {
         return $this->belongsTo(Dog::class);
+    }
+
+    /** @return HasMany<Donation, $this> */
+    public function donations(): HasMany
+    {
+        return $this->hasMany(Donation::class);
     }
 
     public function close(?string $reason = null): void
