@@ -9,6 +9,7 @@ use Database\Factories\DogFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -49,6 +50,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Dog whereShelterId($value)
  *
+ * @property-read Shelter|null $shelter
+ *
  * @mixin \Eloquent
  */
 #[Fillable([
@@ -60,6 +63,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'adoption_status',
     'is_urgent',
     'rescued_at',
+    'shelter_id',
 ])]
 class Dog extends Model
 {
@@ -76,5 +80,11 @@ class Dog extends Model
             'gender' => Gender::class,
             'adoption_status' => AdoptionStatus::class,
         ];
+    }
+
+    /** @return BelongsTo<Shelter, $this> */
+    public function shelter(): BelongsTo
+    {
+        return $this->belongsTo(Shelter::class);
     }
 }
