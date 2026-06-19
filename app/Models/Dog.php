@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @property int $id
@@ -69,12 +71,18 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'rescued_at',
     'shelter_id',
 ])]
-class Dog extends Model
+class Dog extends Model implements HasMedia
 {
     /** @use HasFactory<DogFactory> */
     use HasFactory;
 
+    use InteractsWithMedia;
     use SoftDeletes;
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('photos')->useDisk('s3');
+    }
 
     protected function casts(): array
     {

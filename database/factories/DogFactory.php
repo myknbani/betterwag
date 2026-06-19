@@ -16,7 +16,7 @@ class DogFactory extends Factory
     {
         return [
             'name' => fake()->firstName(),
-            'breed' => fake()->randomElement(['Aspin', 'Labrador', 'Shih Tzu', 'Golden Retriever', 'Poodle', 'Beagle']),
+            'breed' => fake()->randomElement(['German Shepherd', 'Labrador', 'Shih Tzu', 'Golden Retriever', 'Poodle', 'Beagle']),
             'age_months' => fake()->optional()->numberBetween(1, 180),
             'gender' => fake()->randomElement(Gender::cases()),
             'description' => fake()->optional()->paragraph(),
