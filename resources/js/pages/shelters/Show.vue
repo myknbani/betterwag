@@ -103,7 +103,7 @@ function formatAge(months: number | null): string {
                         <span
                             class="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-xs capitalize"
                         >
-                            {{ campaign.type }}
+                            {{ campaign.type.replace('_', ' ') }}
                         </span>
                     </div>
                     <p
