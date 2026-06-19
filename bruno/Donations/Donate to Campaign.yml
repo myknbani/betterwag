@@ -6,14 +6,15 @@ info:
 http:
   method: POST
   url: "{{baseUrl}}/api/campaigns/1/donate"
-  auth: inherit
   body:
     type: json
     data: |-
       {
         "type": "one_time",
-        "amount": 5000
+        "amount": 33000,
+        "payment_method_id": "pm_card_visa"
       }
+  auth: inherit
 
 settings:
   encodeUrl: true

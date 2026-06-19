@@ -21,6 +21,7 @@ class CreateDonationRequest extends FormRequest
         return [
             'type' => ['required', new Enum(DonationType::class)],
             'amount' => ['required', 'integer', 'min:1'],
+            'payment_method_id' => ['nullable', 'string'],
         ];
     }
 }

@@ -5,23 +5,26 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateDonationRequest;
 use App\Models\Campaign;
 use App\Models\Donation;
+use App\Services\PaymentService;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class DonationController extends Controller
 {
+    public function __construct(private PaymentService $paymentService) {}
+
     public function store(CreateDonationRequest $request, Campaign $campaign): JsonResource
     {
+        $validatedRequest = $request->validated();
         $donation = Donation::create([
-            ...$request->validated(),
+            ...$validatedRequest,
             'campaign_id' => $campaign->id,
             'user_id' => $request->user()->id,
         ]);
 
-        // TODO: create Stripe PaymentIntent via StripeService
-        // $paymentIntent = $this->stripeService->createPaymentIntent($donation);
-        // return (new DonationResource($donation))->additional(['client_secret' => $paymentIntent->client_secret]);
+        $paymentIntent = $this->paymentService->createPaymentIntent($donation, $validatedRequest['payment_method_id'] ?? null);
+        $donation->update(['stripe_payment_intent_id' => $paymentIntent->id]);
 
-        return $donation->toResource();
+        return $donation->refresh()->toResource();
     }
 
     public function show(Donation $donation): JsonResource
