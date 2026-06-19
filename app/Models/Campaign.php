@@ -7,6 +7,7 @@ use App\Enums\CampaignType;
 use Carbon\CarbonImmutable;
 use Database\Factories\CampaignFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -50,6 +51,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Campaign whereUpdatedAt($value)
+ *
+ * @property-read Collection<int, Donation> $donations
+ * @property-read int|null $donations_count
  *
  * @mixin \Eloquent
  */
