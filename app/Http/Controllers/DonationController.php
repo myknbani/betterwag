@@ -22,7 +22,7 @@ class DonationController extends Controller
         ]);
 
         $paymentIntent = $this->paymentService->createPaymentIntent($donation, $validatedRequest['payment_method_id'] ?? null);
-        $donation->update(['stripe_payment_intent_id' => $paymentIntent->id]);
+        $donation->update(['stripe_payment_intent_id' => $paymentIntent->asStripePaymentIntent()->id]);
 
         return $donation->refresh()->toResource();
     }

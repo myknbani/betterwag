@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Donation;
 use Laravel\Cashier\Payment;
+use Laravel\Cashier\PaymentMethod;
 
 /**
  * Handles Stripe interaction without touching our DB.
@@ -18,7 +19,12 @@ class PaymentService
             $user->createAsStripeCustomer();
         }
 
-        $resolvedMethod = $paymentMethodId ?? $user->defaultPaymentMethod()?->id;
+        $default = $user->defaultPaymentMethod();
+        $resolvedMethod = $paymentMethodId ?? (
+            $default instanceof PaymentMethod
+                ? $default->asStripePaymentMethod()->id
+                : $default?->id
+        );
 
         if ($resolvedMethod === null) {
             throw new \InvalidArgumentException('No payment method provided and user has no default payment method.');

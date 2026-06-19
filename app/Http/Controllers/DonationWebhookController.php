@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class DonationWebhookController extends CashierWebhookController
 {
+    /** @param array<string, mixed> $payload */
     public function handlePaymentIntentSucceeded(array $payload): Response
     {
         $paymentIntentId = $payload['data']['object']['id'];
