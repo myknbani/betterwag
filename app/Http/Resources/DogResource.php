@@ -29,6 +29,7 @@ class DogResource extends JsonResource
             'rescuedAt' => $this->rescued_at,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
+            'photoUrl' => $this->getFirstTemporaryUrl(now()->addDay(), 'photos'),
         ];
     }
 }
