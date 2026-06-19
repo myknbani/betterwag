@@ -96,7 +96,7 @@ class Campaign extends Model
 
     public function collectedAmount(): int
     {
-        return $this->donations()->whereStatus(DonationStatus::Paid)->sum('amount');
+        return (int) $this->donations()->whereStatus(DonationStatus::Paid)->sum('amount');
     }
 
     public function close(?string $reason = null): void
