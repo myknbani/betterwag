@@ -8,6 +8,16 @@ interface Shelter {
     description: string | null;
 }
 
+interface Campaign {
+    id: number;
+    title: string;
+    description: string | null;
+    goalAmount: number | null;
+    collectedAmount: number;
+    dogId: number | null;
+    type: string;
+}
+
 interface Dog {
     id: number;
     name: string;
@@ -21,6 +31,7 @@ interface Dog {
 
 const props = defineProps<{
     shelter: Shelter;
+    campaigns: { data: Campaign[] };
     dogs: {
         data: Dog[];
         links: { prev: string | null; next: string | null };
@@ -59,6 +70,58 @@ function formatAge(months: number | null): string {
             <p v-if="props.shelter.description" class="mt-2 text-sm">
                 {{ props.shelter.description }}
             </p>
+        </div>
+
+        <div v-if="props.campaigns.data.length" class="flex flex-col gap-3">
+            <h2 class="text-lg font-semibold">Active Campaigns</h2>
+            <div class="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                <div
+                    v-for="campaign in props.campaigns.data"
+                    :key="campaign.id"
+                    class="flex flex-col gap-2 rounded-xl border border-sidebar-border/70 bg-card p-4"
+                >
+                    <div class="flex items-start justify-between gap-2">
+                        <span class="font-semibold">{{ campaign.title }}</span>
+                        <span
+                            class="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-xs capitalize"
+                        >
+                            {{ campaign.type }}
+                        </span>
+                    </div>
+                    <p
+                        v-if="campaign.description"
+                        class="line-clamp-2 text-xs text-muted-foreground"
+                    >
+                        {{ campaign.description }}
+                    </p>
+                    <div class="mt-1 flex items-center justify-between text-sm">
+                        <span class="text-muted-foreground">
+                            ${{
+                                (
+                                    campaign.collectedAmount / 100
+                                ).toLocaleString()
+                            }}
+                            raised
+                        </span>
+                        <span v-if="campaign.goalAmount" class="font-medium">
+                            of ${{
+                                (campaign.goalAmount / 100).toLocaleString()
+                            }}
+                        </span>
+                    </div>
+                    <div
+                        v-if="campaign.goalAmount"
+                        class="h-1.5 w-full overflow-hidden rounded-full bg-secondary"
+                    >
+                        <div
+                            class="h-full rounded-full bg-primary transition-all"
+                            :style="{
+                                width: `${Math.min((campaign.collectedAmount / campaign.goalAmount) * 100, 100)}%`,
+                            }"
+                        />
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
@@ -109,9 +172,7 @@ function formatAge(months: number | null): string {
         <div class="flex items-center justify-between">
             <span class="text-sm text-muted-foreground">
                 Page {{ props.dogs.meta.current_page }} of
-                {{ props.dogs.meta.last_page }} ({{
-                    props.dogs.meta.total
-                }}
+                {{ props.dogs.meta.last_page }} ({{ props.dogs.meta.total }}
                 dogs)
             </span>
             <div class="flex gap-2">

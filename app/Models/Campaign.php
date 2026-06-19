@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\CampaignStatus;
 use App\Enums\CampaignType;
+use App\Enums\DonationStatus;
 use Carbon\CarbonImmutable;
 use Database\Factories\CampaignFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -91,6 +92,11 @@ class Campaign extends Model
     public function donations(): HasMany
     {
         return $this->hasMany(Donation::class);
+    }
+
+    public function collectedAmount(): int
+    {
+        return $this->donations()->whereStatus(DonationStatus::Paid)->sum('amount');
     }
 
     public function close(?string $reason = null): void

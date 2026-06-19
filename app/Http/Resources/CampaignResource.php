@@ -25,6 +25,7 @@ class CampaignResource extends JsonResource
             'closedReason' => $this->closed_reason,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
+            'collectedAmount' => $this->collectedAmount(),
         ];
     }
 }
