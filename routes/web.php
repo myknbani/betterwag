@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\Web\ShelterController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
+
+Route::get('shelters/{shelter}', [ShelterController::class, 'show'])->name('shelters.page');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
