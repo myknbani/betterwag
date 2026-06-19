@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { ref } from 'vue';
+import DonationModal from '@/components/DonationModal.vue';
 
 interface Shelter {
     id: number;
@@ -39,6 +41,22 @@ const props = defineProps<{
     };
 }>();
 
+const activeCampaign = ref<{ id: number; title: string } | null>(null);
+const localCampaigns = ref<Campaign[]>([...props.campaigns.data]);
+
+function onDonationSuccess(amount: number): void {
+    const campaign = localCampaigns.value.find(
+        (c) => c.id === activeCampaign.value?.id,
+    );
+
+    if (campaign) {
+        campaign.collectedAmount += amount;
+    }
+
+    activeCampaign.value = null;
+    router.reload({ only: ['campaigns'] });
+}
+
 function formatAge(months: number | null): string {
     if (!months) {
         return 'Unknown age';
@@ -72,13 +90,13 @@ function formatAge(months: number | null): string {
             </p>
         </div>
 
-        <div v-if="props.campaigns.data.length" class="flex flex-col gap-3">
+        <div v-if="localCampaigns.length" class="flex flex-col gap-3">
             <h2 class="text-lg font-semibold">Active Campaigns</h2>
-            <div class="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+            <div class="grid items-stretch gap-3 md:grid-cols-2 lg:grid-cols-3">
                 <div
-                    v-for="campaign in props.campaigns.data"
+                    v-for="campaign in localCampaigns"
                     :key="campaign.id"
-                    class="flex flex-col gap-2 rounded-xl border border-sidebar-border/70 bg-card p-4"
+                    class="flex h-full flex-col gap-2 rounded-xl border border-sidebar-border/70 bg-card p-4"
                 >
                     <div class="flex items-start justify-between gap-2">
                         <span class="font-semibold">{{ campaign.title }}</span>
@@ -120,6 +138,17 @@ function formatAge(months: number | null): string {
                             }"
                         />
                     </div>
+                    <button
+                        class="mt-auto w-full rounded-lg bg-primary py-1.5 text-sm font-medium text-primary-foreground hover:opacity-90"
+                        @click="
+                            activeCampaign = {
+                                id: campaign.id,
+                                title: campaign.title,
+                            }
+                        "
+                    >
+                        Donate
+                    </button>
                 </div>
             </div>
         </div>
@@ -193,4 +222,11 @@ function formatAge(months: number | null): string {
             </div>
         </div>
     </div>
+
+    <DonationModal
+        :open="activeCampaign !== null"
+        :campaign="activeCampaign"
+        @close="activeCampaign = null"
+        @success="onDonationSuccess"
+    />
 </template>
