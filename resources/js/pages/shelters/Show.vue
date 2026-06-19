@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 
 interface Shelter {
     id: number;
@@ -21,7 +21,11 @@ interface Dog {
 
 const props = defineProps<{
     shelter: Shelter;
-    dogs: { data: Dog[] };
+    dogs: {
+        data: Dog[];
+        links: { prev: string | null; next: string | null };
+        meta: { current_page: number; last_page: number; total: number };
+    };
 }>();
 
 function formatAge(months: number | null): string {
@@ -99,6 +103,32 @@ function formatAge(months: number | null): string {
                         </span>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between">
+            <span class="text-sm text-muted-foreground">
+                Page {{ props.dogs.meta.current_page }} of
+                {{ props.dogs.meta.last_page }} ({{
+                    props.dogs.meta.total
+                }}
+                dogs)
+            </span>
+            <div class="flex gap-2">
+                <Link
+                    v-if="props.dogs.links.prev"
+                    :href="props.dogs.links.prev"
+                    class="rounded-lg border border-sidebar-border/70 px-3 py-1.5 text-sm hover:bg-secondary"
+                >
+                    Previous
+                </Link>
+                <Link
+                    v-if="props.dogs.links.next"
+                    :href="props.dogs.links.next"
+                    class="rounded-lg border border-sidebar-border/70 px-3 py-1.5 text-sm hover:bg-secondary"
+                >
+                    Next
+                </Link>
             </div>
         </div>
     </div>

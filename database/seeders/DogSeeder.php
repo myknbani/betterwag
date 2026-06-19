@@ -12,10 +12,10 @@ class DogSeeder extends Seeder
     {
         $shelterIds = Shelter::pluck('id');
 
-        Dog::factory()->count(8)->create([
+        Dog::factory()->count(20)->create([
             'shelter_id' => $shelterIds->random(),
         ]);
-        Dog::factory()->urgent()->count(2)->create([
+        Dog::factory()->urgent()->count(5)->create([
             'shelter_id' => $shelterIds->random(),
         ]);
     }

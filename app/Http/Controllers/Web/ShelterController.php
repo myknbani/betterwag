@@ -13,11 +13,11 @@ class ShelterController extends Controller
 {
     public function show(Shelter $shelter): Response
     {
-        $shelter->load(['dogs' => fn ($q) => $q->with('media')]);
+        $dogs = $shelter->dogs()->with('media')->paginate(8);
 
         return Inertia::render('shelters/Show', [
             'shelter' => new ShelterResource($shelter),
-            'dogs' => DogResource::collection($shelter->dogs),
+            'dogs' => DogResource::collection($dogs),
         ]);
     }
 }
